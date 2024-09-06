@@ -24,7 +24,7 @@ interface SmallCardProps {
     temp,
   }) => {
     return (
-      <div className="bg-[#2ECC71] py-4 px-5 flex flex-col items-center space-y-4 rounded-lg">
+      <div className="bg-[#2ECC71] py-4 px-5 flex flex-col items-center space-y-4 rounded-lg ">
         <p>{dayTitle}</p>
         <img src={`/images/${img}.png`} alt="weather-icon" className="max-h-16" />
         <div className="flex justify-between space-x-5">

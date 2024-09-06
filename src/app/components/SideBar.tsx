@@ -47,7 +47,7 @@ const SideBar = ({ bgColors }: Propstype) => {
 
   return (
     <div
-      className={`flex flex-col min-h-screen bg-[${bgColors}] w-full lg:w-1/3 p-7 lg:p-4 xl:p-7 space-y-10 overflow-x-hidden`}
+      className={`flex flex-col min-h-screen bg-[${bgColors}] w-full lg:w-1/3 p-7 lg:p-4 xl:p-7 space-y-10 overflow-x-hidden pt-0`}
     >
       {isOpen ? (
         <SearchLocation onClose={() => setIsOpen(false)} />

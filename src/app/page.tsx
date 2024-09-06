@@ -77,7 +77,7 @@ export default function Home() {
 
   return (
     <>
-      <div className={`${bgColorClass} flex flex-col lg:flex-row`}>
+      <div className={`${bgColorClass} flex flex-col lg:flex-row w-full h-full`}>
         <SideBar bgColors={bgColor} />
         <MainContent />
       </div>

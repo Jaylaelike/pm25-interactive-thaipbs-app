@@ -4,8 +4,14 @@ import IndicatorBar from "./IndicatorBar";
 import LargeCard from "./LargeCard";
 import SmallCard from "./SmallCard";
 import { useEffect, useState } from "react";
+import ClockDigitTimer from "./DigitalClock";
 
 const MainContent = () => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const [bgColor, setBgColor] = useState("#2ECC71");
   const [sensorData, setSensorData] = useState({
     temperature: 0,
@@ -43,9 +49,7 @@ const MainContent = () => {
           } else if (data.temperature < 10) {
             setBgColor("#3498db");
           }
-
         }
-
       }
     });
 
@@ -56,7 +60,7 @@ const MainContent = () => {
 
   console.log(sensorData);
 
-  const bgColorClass =  
+  const bgColorClass =
     bgColor === "#2ECC71"
       ? "bg-[#2ECC71]"
       : bgColor === "#f1c40f"
@@ -68,11 +72,9 @@ const MainContent = () => {
       : bgColor === "#3498db"
       ? "bg-[#3498db]"
       : "bg-[#2ECC71]";
-      
-
 
   return (
-    <div className="text-gray-150 p-10 flex-grow">
+    <div className="text-gray-150 p-10 flex-grow pt-0">
       <div className="space-x-3 text-right">
         <button className="bg-[#2ECC71] rounded-full w-10 h-10 text-gray-100 font-bold text-xl">
           &deg;C
@@ -82,8 +84,10 @@ const MainContent = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 my-5 gap-10 justify-center">
-        <SmallCard
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 my-5 gap-5 justify-center">
+        {isClient ? <ClockDigitTimer /> : null}
+
+        {/* <SmallCard
           dayTitle="Tomorrow"
           img="Shower"
           max={20}
@@ -96,10 +100,10 @@ const MainContent = () => {
           max={27}
           min={18}
           temp="C"
-        />
+        /> */}
       </div>
 
-      <div className="my-10">
+      <div className="my-5">
         <h3 className=" text-gray-350 text-2xl font-bold mb-5">
           Todays Highlights
         </h3>
