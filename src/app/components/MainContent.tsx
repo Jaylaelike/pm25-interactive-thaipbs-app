@@ -2,7 +2,6 @@
 import mqtt from "mqtt";
 import IndicatorBar from "./IndicatorBar";
 import LargeCard from "./LargeCard";
-import SmallCard from "./SmallCard";
 import { useEffect, useState } from "react";
 import ClockDigitTimer from "./DigitalClock";
 
@@ -38,15 +37,15 @@ const MainContent = () => {
         const data = JSON.parse(message.toString());
         setSensorData(data);
         if (data) {
-          if (data.temperature >= 23 && data.temperature <= 28) {
+          if (data.pm2_5 >= 23 && data.pm2_5 <= 28) {
             setBgColor("#f1c40f");
-          } else if (data.temperature >= 30 && data.temperature <= 40) {
+          } else if (data.pm2_5 >= 30 && data.pm2_5 <= 40) {
             setBgColor("#e3901b");
-          } else if (data.temperature > 40) {
+          } else if (data.pm2_5 > 40) {
             setBgColor("#e74c3c");
-          } else if (data.temperature >= 10 && data.temperature < 23) {
+          } else if (data.pm2_5 >= 10 && data.pm2_5 < 23) {
             setBgColor("#2ECC71");
-          } else if (data.temperature < 10) {
+          } else if (data.pm2_5 < 10) {
             setBgColor("#3498db");
           }
         }
