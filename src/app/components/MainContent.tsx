@@ -4,6 +4,7 @@ import IndicatorBar from "./IndicatorBar";
 import LargeCard from "./LargeCard";
 import { useEffect, useState } from "react";
 import ClockDigitTimer from "./DigitalClock";
+import useSensorDataforPm25 from "@/lib/useSensorForPm25";
 
 const MainContent = () => {
   const [isClient, setIsClient] = useState(false);
@@ -11,66 +12,81 @@ const MainContent = () => {
     setIsClient(true);
   }, []);
 
-  const [bgColor, setBgColor] = useState("#2ECC71");
-  const [sensorData, setSensorData] = useState({
-    temperature: 0,
-    humidity: 0,
-    pm1: 0,
-    pm2_5: 0,
-    pm10: 0,
-  });
-
-  useEffect(() => {
-    const client = mqtt.connect("ws://172.16.202.63:8083/mqtt", {
-      username: "admin",
-      password: "public",
-      clientId: "emqx_" + Math.random().toString(16).substr(2, 8),
-    });
-
-    client.on("connect", () => {
-      console.log("Connected to MQTT broker");
-      client.subscribe("sensor/data");
-    });
-
-    client.on("message", (topic, message) => {
-      if (topic === "sensor/data") {
-        const data = JSON.parse(message.toString());
-        setSensorData(data);
-        if (data) {
-          if (data.pm2_5 >= 23 && data.pm2_5 <= 28) {
-            setBgColor("#f1c40f");
-          } else if (data.pm2_5 >= 30 && data.pm2_5 <= 40) {
-            setBgColor("#e3901b");
-          } else if (data.pm2_5 > 40) {
-            setBgColor("#e74c3c");
-          } else if (data.pm2_5 >= 10 && data.pm2_5 < 23) {
-            setBgColor("#2ECC71");
-          } else if (data.pm2_5 < 10) {
-            setBgColor("#3498db");
-          }
-        }
-      }
-    });
-
-    return () => {
-      client.end();
-    };
-  }, []);
-
-  console.log(sensorData);
-
+  const { sensorData, bgColorMain } = useSensorDataforPm25();
   const bgColorClass =
-    bgColor === "#2ECC71"
+  bgColorMain === "#2ECC71"
       ? "bg-[#2ECC71]"
-      : bgColor === "#f1c40f"
+      : bgColorMain === "#f1c40f"
       ? "bg-[#f1c40f]"
-      : bgColor === "#e3901b"
+      : bgColorMain === "#e3901b"
       ? "bg-[#e3901b]"
-      : bgColor === "#e74c3c"
+      : bgColorMain === "#e74c3c"
       ? "bg-[#e74c3c]"
-      : bgColor === "#3498db"
+      : bgColorMain === "#3498db"
       ? "bg-[#3498db]"
       : "bg-[#2ECC71]";
+
+
+  // const [bgColor, setBgColor] = useState("#2ECC71");
+  // const [sensorData, setSensorData] = useState({
+  //   temperature: 0,
+  //   humidity: 0,
+  //   pm1: 0,
+  //   pm2_5: 0,
+  //   pm10: 0,
+  // });
+
+  // useEffect(() => {
+  //   const client = mqtt.connect("ws://172.16.202.63:8083/mqtt", {
+  //     username: "admin",
+  //     password: "public",
+  //     clientId: "emqx_" + Math.random().toString(16).substr(2, 8),
+  //   });
+
+  //   client.on("connect", () => {
+  //     console.log("Connected to MQTT broker");
+  //     client.subscribe("sensor/data");
+  //   });
+
+  //   client.on("message", (topic, message) => {
+  //     if (topic === "sensor/data") {
+  //       const data = JSON.parse(message.toString());
+  //       setSensorData(data);
+  //       if (data) {
+  //         if (data.pm2_5 >= 23 && data.pm2_5 <= 28) {
+  //           setBgColor("#f1c40f");
+  //         } else if (data.pm2_5 >= 30 && data.pm2_5 <= 40) {
+  //           setBgColor("#e3901b");
+  //         } else if (data.pm2_5 > 40) {
+  //           setBgColor("#e74c3c");
+  //         } else if (data.pm2_5 >= 10 && data.pm2_5 < 23) {
+  //           setBgColor("#2ECC71");
+  //         } else if (data.pm2_5 < 10) {
+  //           setBgColor("#3498db");
+  //         }
+  //       }
+  //     }
+  //   });
+
+  //   return () => {
+  //     client.end();
+  //   };
+  // }, []);
+
+  // console.log(sensorData);
+
+  // const bgColorClass =
+  //   bgColor === "#2ECC71"
+  //     ? "bg-[#2ECC71]"
+  //     : bgColor === "#f1c40f"
+  //     ? "bg-[#f1c40f]"
+  //     : bgColor === "#e3901b"
+  //     ? "bg-[#e3901b]"
+  //     : bgColor === "#e74c3c"
+  //     ? "bg-[#e74c3c]"
+  //     : bgColor === "#3498db"
+  //     ? "bg-[#3498db]"
+  //     : "bg-[#2ECC71]";
 
   return (
     <div className="text-gray-150 p-10 flex-grow pt-0">
