@@ -45,6 +45,14 @@ const SideBar = ({ bgColors }: Propstype) => {
 
   console.log(sensorData);
 
+  const getHappinessIcon = (pm25Level: number) => {
+    if (pm25Level <= 12) return "/images/happiness/very-happy.png";
+    if (pm25Level <= 35.4) return "/images/happiness/happy.png";
+    if (pm25Level <= 55.4) return "/images/happiness/neutral.png";
+    if (pm25Level <= 150.4) return "/images/happiness/sad.png";
+    return "/images/happiness/very-sad.png";
+  };
+
   return (
     <div
       className={`flex flex-col min-h-screen bg-[${bgColors}] w-full lg:w-1/3 p-7 lg:p-4 xl:p-7 space-y-10 overflow-x-hidden pt-0`}
@@ -65,14 +73,14 @@ const SideBar = ({ bgColors }: Propstype) => {
               width={200}
               height={200}
               alt="bg"
-              className="opacity-10 absolute max-w-52"
+              className="opacity-5 absolute max-w-52"
             />
             <Image
-              src="/images/pollution.png"
+              src={getHappinessIcon(sensorData.pm2_5)}
               width={200}
               height={200}
-              alt="weather"
-              className="max-h-48"
+              alt="air quality indicator"
+              className="max-h-48 z-10"
             />
           </div>
 
