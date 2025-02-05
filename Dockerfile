@@ -1,5 +1,5 @@
 # Start from the official Node.js LTS base image
-FROM node:20-alpine
+FROM --platform=linux/arm64 node:18-alpine
 
 
 # Set the working directory
@@ -11,7 +11,7 @@ COPY package*.json ./
 
 
 # Install dependencies
-RUN npm install
+RUN npm install --force --target_arch=arm64
 
 RUN npm ci
 
