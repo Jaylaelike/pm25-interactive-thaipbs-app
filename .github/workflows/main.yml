@@ -1,76 +1,76 @@
-# name: Publish Docker image
-
-# on:
-#   release:
-#     types: [published]
-#   push:
-#     branches:
-#       - main
-
-# jobs:
-#   push_to_registry:
-#     name: Push Docker image to Docker Hub
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#         name: Check out code
-
-#       # Required when overrideDriver is set to true
-#       - uses: docker/setup-buildx-action@v2
-#         name: Customize Docker driver
-#         with:
-#           driver-opts: image=moby/buildkit:v0.11.0
-
-#       - uses: mr-smithers-excellent/docker-build-push@v6
-#         name: Build & push Docker image
-#         with:
-#           image: jaylaelove/noc-pm25-interactive-2024
-#           tags: latest
-#           registry: docker.io
-#           platform: linux/arm64
-#           overrideDriver: true
-#           username: ${{ secrets.DOCKER_HUB_USERNAME }}
-#           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-name: ci
+name: Publish Docker image
 
 on:
+  release:
+    types: [published]
   push:
+    branches:
+      - main
 
 jobs:
-  docker:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+        name: Check out code
 
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
+      # Required when overrideDriver is set to true
+      - uses: docker/setup-buildx-action@v2
+        name: Customize Docker driver
         with:
-          daemon-config: |
-            {
-              "debug": true,
-              "features": {
-                "containerd-snapshotter": true
-              }
-            }
+          driver-opts: image=moby/buildkit:v0.11.0
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - uses: mr-smithers-excellent/docker-build-push@v6
+        name: Build & push Docker image
         with:
+          image: jaylaelove/noc-pm25-interactive-2024
+          tags: latest
+          registry: docker.io
+          platform: linux/amd64
+          overrideDriver: true
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+# name: ci
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+# on:
+#   push:
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/arm64
-          push: true
-          tags: jaylaelove/noc-pm25-interactive-2024:arm64
+# jobs:
+#   docker:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Set up Docker
+#         uses: docker/setup-docker-action@v4
+#         with:
+#           daemon-config: |
+#             {
+#               "debug": true,
+#               "features": {
+#                 "containerd-snapshotter": true
+#               }
+#             }
+
+#       - name: Login to Docker Hub
+#         uses: docker/login-action@v3
+#         with:
+#           username: ${{ secrets.DOCKER_HUB_USERNAME }}
+#           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+#       - name: Set up QEMU
+#         uses: docker/setup-qemu-action@v3
+
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3
+
+#       - name: Build and push
+#         uses: docker/build-push-action@v6
+#         with:
+#           context: .
+#           platforms: linux/arm64
+#           push: true
+#           tags: jaylaelove/noc-pm25-interactive-2024:arm64
