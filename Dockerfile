@@ -11,7 +11,7 @@ COPY package*.json ./
 
 
 # Install dependencies
-RUN npm install --force --target_arch=arm64
+RUN npm install
 
 RUN npm ci
 
