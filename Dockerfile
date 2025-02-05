@@ -11,7 +11,7 @@ COPY package*.json ./
 
 
 # Install dependencies
-RUN npm install
+RUN npm install -- legacy-peer-deps and npm audit fix --force
 
 RUN npm ci
 
