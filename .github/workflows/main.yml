@@ -70,4 +70,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: jaylaelove/noc-pm25-interactive-2024:latest
+          tags: jaylaelove/noc-pm25-interactive-2024:arm64
