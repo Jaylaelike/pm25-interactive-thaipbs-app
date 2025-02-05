@@ -27,7 +27,7 @@ jobs:
           image: jaylaelove/noc-pm25-interactive-2024
           tags: latest
           registry: docker.io
-          platform: linux/amd64
+          platform: linux/arm64,linux/amd64
           overrideDriver: true
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
