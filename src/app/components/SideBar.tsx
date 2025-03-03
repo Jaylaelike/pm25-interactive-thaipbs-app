@@ -4,6 +4,8 @@ import SearchLocation from "./SearchLocation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import mqtt from "mqtt";
+import useMqttConfig from "@/lib/useMqttConfig";
+import useSensorDataforPm25 from "@/lib/useSensorForPm25";
 
 interface Propstype {
   bgColors: string;
@@ -11,39 +13,17 @@ interface Propstype {
 const SideBar = ({ bgColors }: Propstype) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [sensorData, setSensorData] = useState({
-    temperature: 0,
-    humidity: 0,
-    pm1: 0,
-    pm2_5: 0,
-    pm10: 0,
-  });
+  
+    const [isClient, setIsClient] = useState(false);
+    const { mqttUrl } = useMqttConfig();
+    
+    useEffect(() => {
+      setIsClient(true);
+    }, []);
+  
 
-  useEffect(() => {
-    const client = mqtt.connect("ws://172.16.202.63:8083/mqtt", {
-      username: "admin",
-      password: "public",
-      clientId: "emqx_" + Math.random().toString(16).substr(2, 8),
-    });
+    const { sensorData, bgColorMain } = useSensorDataforPm25(mqttUrl);
 
-    client.on("connect", () => {
-      console.log("Connected to MQTT broker");
-      client.subscribe("sensor/data");
-    });
-
-    client.on("message", (topic, message) => {
-      if (topic === "sensor/data") {
-        const data = JSON.parse(message.toString());
-        setSensorData(data);
-      }
-    });
-
-    return () => {
-      client.end();
-    };
-  }, []);
-
-  console.log(sensorData);
 
   const getHappinessIcon = (pm25Level: number) => {
     if (pm25Level <= 12) return "/images/happiness/very-happy.png";
