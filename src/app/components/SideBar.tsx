@@ -26,10 +26,10 @@ const SideBar = ({ bgColors }: Propstype) => {
 
 
   const getHappinessIcon = (pm25Level: number) => {
-    if (pm25Level <= 12) return "/images/happiness/very-happy.png";
-    if (pm25Level <= 35.4) return "/images/happiness/happy.png";
-    if (pm25Level <= 55.4) return "/images/happiness/neutral.png";
-    if (pm25Level <= 150.4) return "/images/happiness/sad.png";
+    if (pm25Level <= 15) return "/images/happiness/very-happy.png";
+    if (pm25Level <= 25) return "/images/happiness/happy.png";
+    if (pm25Level <= 37.5) return "/images/happiness/neutral.png";
+    if (pm25Level <= 75) return "/images/happiness/sad.png";
     return "/images/happiness/very-sad.png";
   };
 
