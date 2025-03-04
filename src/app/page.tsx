@@ -8,26 +8,29 @@ import React from "react";
 import { Loader2, Settings } from "lucide-react";
 
 export default function Home() {
-  const { mqttUrl, isLoading, error, updateMqttConfig } = useMqttConfig();
+  const { mqttUrl, location, isLoading, error, updateMqttConfig } =
+    useMqttConfig();
   const [localMqttUrl, setLocalMqttUrl] = React.useState(mqttUrl);
   const [showModal, setShowModal] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
+  const [localLocation, setLocalLocation] = React.useState(location);
 
   const { bgColorMain, bgColor } = useSensorDataforPm25(mqttUrl);
 
   const [bgColorClass, setBgColorClass] = React.useState("bg-green-500");
-  
+
   // Update local state when the fetched mqttUrl changes
   React.useEffect(() => {
     setLocalMqttUrl(mqttUrl);
-  }, [mqttUrl]);
-  
+    setLocalLocation(location);
+  }, [mqttUrl, location]);
+
   React.useEffect(() => {
-    const newBgColor = 
+    const newBgColor =
       bgColorMain === "#3b82f6"
         ? "bg-blue-500"
         : bgColorMain === "#2ecc71"
-        ? "bg-green-500" 
+        ? "bg-green-500"
         : bgColorMain === "#f1c40f"
         ? "bg-yellow-300"
         : bgColorMain === "#e3901b"
@@ -35,16 +38,16 @@ export default function Home() {
         : bgColorMain === "#ef4444"
         ? "bg-red-500"
         : "bg-green-500";
-    
+
     setBgColorClass(newBgColor);
   }, [bgColorMain]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    
+
     try {
-      const success = await updateMqttConfig(localMqttUrl);
+      const success = await updateMqttConfig(localMqttUrl, localLocation);
       if (success) {
         setShowModal(false);
       }
@@ -75,12 +78,12 @@ export default function Home() {
 
   return (
     <>
-      <button 
+      <button
         onClick={() => setShowModal(true)}
         className="fixed top-4 right-4 bg-gray-400 hover:bg-gray-600 text-white p-3 rounded-full flex items-center justify-center gap-2 shadow-lg transition-colors"
       >
         <Settings className="h-5 w-5" />
-        <span>MQTT</span>
+        
       </button>
 
       {showModal && (
@@ -96,6 +99,24 @@ export default function Home() {
                 placeholder="WebSocket URL"
                 disabled={isSaving}
               />
+
+              <div className="mb-4">
+                <label
+                  htmlFor="location"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Location
+                </label>
+                <input
+                  id="location"
+                  type="text"
+                  value={localLocation}
+                  onChange={(e) => setLocalLocation(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  placeholder="Location"
+                  disabled={isSaving}
+                />
+              </div>
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -116,7 +137,7 @@ export default function Home() {
                       Saving...
                     </>
                   ) : (
-                    'Save'
+                    "Save"
                   )}
                 </button>
               </div>
@@ -125,7 +146,9 @@ export default function Home() {
         </div>
       )}
 
-      <div className={`${bgColorClass} flex flex-col lg:flex-row w-full h-full`}>
+      <div
+        className={`${bgColorClass} flex flex-col lg:flex-row w-full h-full`}
+      >
         <SideBar bgColors={bgColor} />
         <MainContent />
       </div>

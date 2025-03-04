@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import IndicatorBar from "./IndicatorBar";
@@ -8,11 +6,12 @@ import { useEffect, useState } from "react";
 import ClockDigitTimer from "./DigitalClock";
 import useSensorDataforPm25 from "@/lib/useSensorForPm25";
 import useMqttConfig from "@/lib/useMqttConfig";
+import { Droplets, ThermometerSun, Smile } from "lucide-react";
 
 const MainContent = () => {
   const [isClient, setIsClient] = useState(false);
   const { mqttUrl } = useMqttConfig();
-  
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -37,7 +36,7 @@ const MainContent = () => {
   };
 
   const { sensorData, bgColorMain } = useSensorDataforPm25(mqttUrl);
-  
+
   const bgColorClass =
     bgColorMain === "#3b82f6"
       ? "bg-[#3b82f6]"
@@ -53,8 +52,6 @@ const MainContent = () => {
 
   return (
     <div className="text-gray-150 p-10 flex-grow pt-0">
-   
-
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 my-5 gap-5 justify-center">
         {isClient ? <ClockDigitTimer /> : null}
       </div>
@@ -72,10 +69,10 @@ const MainContent = () => {
           >
             <div className="flex justify-between space-x-5 items-center">
               <div className="bg-gray-500 rounded-full w-[30px] h-[30px] flex justify-center items-center">
-                <i className="fas fa-location-arrow"></i>
+                <i className="fas fa-smog"></i>
               </div>
               <p className="text-gray-150 text-sm"></p>
-            </div>
+            </div>{" "}
           </LargeCard>
 
           <LargeCard
@@ -84,20 +81,12 @@ const MainContent = () => {
             desc="%"
             bgColors={bgColorClass}
           >
-            <div className="self-stretch text-gray-250 text-xs space-y-1">
-              <div className="flex justify-between space-x-5 items-center px-1">
-                <p>0</p>
-                <p>50</p>
-                <p>100</p>
+            <div className="flex justify-between space-x-5 items-center">
+              <div className="bg-blue-500 rounded-full w-[30px] h-[30px] flex justify-center items-center">
+                <Droplets size={16} className="text-white" />
               </div>
-              <div className="w-full h-2 bg-gray-150 rounded-full overflow-hidden">
-                <div
-                  className="bg-[#FFEC65] h-2"
-                  style={{ width: `${sensorData.humidity}%` }}
-                ></div>
-              </div>
-              <p className="text-right">%</p>
-            </div>
+              <p className="text-gray-150 text-sm"></p>
+            </div>{" "}
           </LargeCard>
 
           <LargeCard
@@ -105,14 +94,28 @@ const MainContent = () => {
             num={sensorData.temperature}
             bgColors={bgColorClass}
             desc=" C"
-          />
+          >
+            <div className="flex justify-between space-x-5 items-center">
+              <div className="bg-red-500 rounded-full w-[30px] h-[30px] flex justify-center items-center">
+                <ThermometerSun size={16} className="text-white" />
+              </div>
+              <p className="text-gray-150 text-sm"></p>
+            </div>{" "}
+          </LargeCard>
 
           <LargeCard
             title="AQI"
             num={calculateAQI(sensorData.pm2_5)}
             desc=""
             bgColors={bgColorClass}
-          />
+          >
+            <div className="flex justify-between space-x-5 items-center">
+              <div className="bg-green-500 rounded-full w-[30px] h-[30px] flex justify-center items-center">
+                <Smile size={16} className="text-white" />
+              </div>
+              <p className="text-gray-150 text-sm"></p>
+            </div>{" "}
+          </LargeCard>
         </div>
         <div>
           <IndicatorBar />

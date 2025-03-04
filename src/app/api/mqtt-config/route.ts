@@ -10,7 +10,8 @@ export async function GET() {
     if (!config) {
       config = await prisma.mqttConfig.create({
         data: {
-          mqttUrl: "ws://172.16.202.63:8083/mqtt"
+          mqttUrl: "ws://172.16.202.63:8083/mqtt",
+          location: "อาคาร A Thaipbs"
         }
       });
     }
@@ -28,7 +29,7 @@ export async function GET() {
 // POST /api/mqtt-config
 export async function POST(request: NextRequest) {
   try {
-    const { mqttUrl } = await request.json();
+    const { mqttUrl, location } = await request.json();
     
     if (!mqttUrl) {
       return NextResponse.json(
@@ -45,12 +46,18 @@ export async function POST(request: NextRequest) {
       // Update existing config
       config = await prisma.mqttConfig.update({
         where: { id: existingConfig.id },
-        data: { mqttUrl }
+        data: { 
+          mqttUrl,
+          ...(location && { location })
+        }
       });
     } else {
       // Create new config
       config = await prisma.mqttConfig.create({
-        data: { mqttUrl }
+        data: { 
+          mqttUrl,
+          location: location || "อาคาร A Thaipbs"
+        }
       });
     }
     

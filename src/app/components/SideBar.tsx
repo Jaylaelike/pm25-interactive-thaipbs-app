@@ -13,17 +13,14 @@ interface Propstype {
 const SideBar = ({ bgColors }: Propstype) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const [isClient, setIsClient] = useState(false);
+  const { mqttUrl, location } = useMqttConfig();
   
-    const [isClient, setIsClient] = useState(false);
-    const { mqttUrl } = useMqttConfig();
-    
-    useEffect(() => {
-      setIsClient(true);
-    }, []);
-  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-    const { sensorData, bgColorMain } = useSensorDataforPm25(mqttUrl);
-
+  const { sensorData, bgColorMain } = useSensorDataforPm25(mqttUrl);
 
   const getHappinessIcon = (pm25Level: number) => {
     if (pm25Level <= 15) return "/images/happiness/very-happy.png";
@@ -83,7 +80,7 @@ const SideBar = ({ bgColors }: Propstype) => {
                 })}
               </p>
               <p>
-                <i className="fas fa-map-marker-alt"></i> อาคาร A Thaipbs
+                <i className="fas fa-map-marker-alt"></i> {location}
               </p>
             </div>
           </div>

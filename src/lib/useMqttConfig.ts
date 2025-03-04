@@ -5,12 +5,14 @@ import { useState, useEffect } from 'react';
 interface MqttConfig {
   id: string;
   mqttUrl: string;
+  location: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export default function useMqttConfig() {
   const [mqttUrl, setMqttUrl] = useState<string>("ws://172.16.202.63:8083/mqtt");
+  const [location, setLocation] = useState<string>("อาคาร A Thaipbs");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,6 +28,7 @@ export default function useMqttConfig() {
       
       const data: MqttConfig = await response.json();
       setMqttUrl(data.mqttUrl);
+      setLocation(data.location);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -36,7 +39,7 @@ export default function useMqttConfig() {
   };
 
   // Update the MQTT configuration
-  const updateMqttConfig = async (newMqttUrl: string) => {
+  const updateMqttConfig = async (newMqttUrl: string, newLocation?: string) => {
     try {
       setIsLoading(true);
       const response = await fetch('/api/mqtt-config', {
@@ -44,7 +47,10 @@ export default function useMqttConfig() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ mqttUrl: newMqttUrl }),
+        body: JSON.stringify({ 
+          mqttUrl: newMqttUrl,
+          ...(newLocation && { location: newLocation })
+        }),
       });
       
       if (!response.ok) {
@@ -53,6 +59,7 @@ export default function useMqttConfig() {
       
       const data: MqttConfig = await response.json();
       setMqttUrl(data.mqttUrl);
+      setLocation(data.location);
       setError(null);
       return true;
     } catch (err) {
@@ -71,6 +78,7 @@ export default function useMqttConfig() {
 
   return {
     mqttUrl,
+    location,
     isLoading,
     error,
     updateMqttConfig,

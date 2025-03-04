@@ -13,6 +13,7 @@ datasource db {
 model MqttConfig {
   id        String   @id @default(cuid())
   mqttUrl   String   @default("ws://172.16.202.63:8083/mqtt")
+  location  String   @default("สถานที่")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
