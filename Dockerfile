@@ -25,7 +25,7 @@ RUN npm run build
 EXPOSE 3003
 
 # Run npm start script
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
 
 
 
