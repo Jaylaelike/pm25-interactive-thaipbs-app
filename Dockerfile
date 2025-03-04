@@ -8,6 +8,8 @@ WORKDIR /app
 # Utilise Docker cache to save re-installing dependencies if unchanged
 COPY package*.json ./
 
+COPY prisma ./prisma/
+
 # Install dependencies
 RUN npm install
 
@@ -16,11 +18,6 @@ RUN npm ci
 # Copy all files
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Run database migrations
-RUN npx prisma migrate deploy
 
 RUN npm run build
 
@@ -28,7 +25,7 @@ RUN npm run build
 EXPOSE 3003
 
 # Run npm start script
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]
 
 
 
