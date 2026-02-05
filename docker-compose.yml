@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  pm25-interactive-thaipbs-app:
+    container_name: pm25-interactive-thaipbs-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      - NEXT_PUBLIC_BASE_PATH=/pm25
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/prisma/dev.db
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true

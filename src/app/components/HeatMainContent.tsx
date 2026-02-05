@@ -6,9 +6,12 @@ import LargeCard from "../components/LargeCard";
 import ClockDigitTimer from "../components/DigitalClock";
 import HeatIndexCard from "../components/HeatIndexCard";
 import HeatIndexIndicator from "../components/HeatIndexIndicator";
+import HeatTimeSeriesChart from "../components/HeatTimeSeriesChart";
+import PM25HourlyCard from "../components/PM25HourlyCard";
 import useSensorDataforPm25 from "@/lib/useSensorForPm25";
 import useMqttConfig from "@/lib/useMqttConfig";
 import { calculateHeatIndex } from "@/lib/heatIndex";
+import { motion } from "framer-motion";
 
 const HeatMainContent = () => {
   const [isClient, setIsClient] = useState(false);
@@ -19,161 +22,174 @@ const HeatMainContent = () => {
     setIsClient(true);
   }, []);
 
-  // Calculate heat index
   const heatIndexResult = calculateHeatIndex(sensorData.temperature, sensorData.humidity);
 
   const bgColorClass =
     bgColorMain === "#3b82f6"
-      ? "bg-[#3b82f6]"
+      ? "bg-gradient-to-br from-blue-400 to-blue-600"
       : bgColorMain === "#2ecc71"
-      ? "bg-[#2ecc71]"
-      : bgColorMain === "#f1c40f"
-      ? "bg-[#f1c40f]"
-      : bgColorMain === "#e3901b"
-      ? "bg-[#e3901b]"
-      : bgColorMain === "#ef4444"
-      ? "bg-[#ef4444]"
-      : "bg-[#2ecc71]";
+        ? "bg-gradient-to-br from-emerald-400 to-emerald-600"
+        : bgColorMain === "#f1c40f"
+          ? "bg-gradient-to-br from-yellow-400 to-yellow-600"
+          : bgColorMain === "#e3901b"
+            ? "bg-gradient-to-br from-orange-400 to-orange-600"
+            : bgColorMain === "#ef4444"
+              ? "bg-gradient-to-br from-red-400 to-red-600"
+              : "bg-gradient-to-br from-emerald-400 to-emerald-600";
+
+  const heatIndexBgClass =
+    heatIndexResult.bgColor === "bg-green-500"
+      ? "bg-gradient-to-br from-green-400 to-green-600"
+      : heatIndexResult.bgColor === "bg-yellow-500"
+        ? "bg-gradient-to-br from-yellow-400 to-yellow-600"
+        : heatIndexResult.bgColor === "bg-orange-500"
+          ? "bg-gradient-to-br from-orange-400 to-orange-600"
+          : heatIndexResult.bgColor === "bg-red-500"
+            ? "bg-gradient-to-br from-red-400 to-red-600"
+            : "bg-gradient-to-br from-green-400 to-green-600";
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4, ease: [0.33, 1, 0.68, 1] }
+    }
+  };
 
   return (
-    <div className="text-gray-150 p-10 flex-grow pt-0">
-      {/* Temperature Unit Toggle */}
-      <div className="space-x-3 text-right mb-8">
-        <button className="bg-[#2ECC71] rounded-full w-10 h-10 text-gray-100 font-bold text-xl">
-          &deg;C
-        </button>
-        <button className="bg-gray-150 rounded-full w-10 h-10 text-darkblue font-bold text-xl">
-          &deg;F
-        </button>
+    <motion.div
+      className="relative text-gray-150 p-6 md:p-10 flex-grow overflow-y-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Background gradient elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-white/40 to-transparent rounded-full blur-3xl opacity-60" />
+        <div className="absolute bottom-40 left-10 w-72 h-72 bg-gradient-to-tr from-white/30 to-transparent rounded-full blur-3xl opacity-50" />
       </div>
+
+      {/* Temperature Unit Toggle */}
+      <motion.div
+        className="relative z-10 flex justify-end gap-2 mb-6"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="
+            bg-emerald-500 hover:bg-emerald-600
+            rounded-full w-10 h-10 
+            text-white font-bold text-lg
+            shadow-lg shadow-emerald-500/30
+            transition-colors
+          "
+        >
+          °C
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="
+            bg-white/20 hover:bg-white/30
+            backdrop-blur-sm
+            rounded-full w-10 h-10 
+            text-white/80 font-bold text-lg
+            border border-white/20
+            transition-colors
+          "
+        >
+          °F
+        </motion.button>
+      </motion.div>
 
       {/* Clock and Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 my-5 gap-5 justify-center">
-        {isClient ? <ClockDigitTimer /> : null}
+      <motion.div
+        className="relative z-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-5 mb-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants}>
+          {isClient && <ClockDigitTimer />}
+        </motion.div>
 
-        {/* Quick stats cards */}
-        <LargeCard
-          title="อุณหภูมิ"
-          num={sensorData.temperature}
-          desc="°C"
-          bgColors={bgColorClass}
-        >
-          <div className="flex justify-between space-x-5 items-center">
-            <div className="bg-red-500 rounded-full w-[30px] h-[30px] flex justify-center items-center">
-              <ThermometerSun size={16} className="text-white" />
-            </div>
-          </div>
-        </LargeCard>
-
-        <LargeCard
-          title="ความชื้นสัมพัทธ์"
-          num={sensorData.humidity}
-          desc="%"
-          bgColors={bgColorClass}
-        >
-          <div className="flex justify-between space-x-5 items-center">
-            <div className="bg-blue-500 rounded-full w-[30px] h-[30px] flex justify-center items-center">
-              <Droplets size={16} className="text-white" />
-            </div>
-          </div>
-        </LargeCard>
-
-        <LargeCard
-          title="ค่าดัชนีความร้อน"
-          num={heatIndexResult.heatIndex}
-          desc="°C"
-          bgColors={heatIndexResult.bgColor}
-        >
-          <div className="flex justify-between space-x-5 items-center">
-            <div className="bg-orange-500 rounded-full w-[30px] h-[30px] flex justify-center items-center">
-              <Activity size={16} className="text-white" />
-            </div>
-          </div>
-        </LargeCard>
-      </div>
-
-      {/* Main Heat Index Section */}
-      <div className="my-8">
-        <h3 className="text-gray-350 text-3xl font-bold mb-6 text-center">
-          Heat Index Monitor
-        </h3>
-
-        {/* Heat Index Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="lg:col-span-1">
-            <HeatIndexCard
-              temperature={sensorData.temperature}
-              humidity={sensorData.humidity}
-              className="h-full"
-            />
-          </div>
-
-          {/* Additional Information Panel */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Current Status */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h4 className="text-xl font-bold text-gray-150 mb-4 flex items-center">
-                <Activity className="mr-2" size={20} />
-                สถานะปัจจุบัน
-              </h4>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-300">ระดับความเสี่ยง:</span>
-                  <span className={`font-semibold px-3 py-1 rounded-full text-sm ${heatIndexResult.bgColor} text-white`}>
-                    {heatIndexResult.levelText}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Heat Index:</span>
-                  <span className="text-white font-bold">{heatIndexResult.heatIndex}°C</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">อุณหภูมิ:</span>
-                  <span className="text-white font-bold">{sensorData.temperature}°C</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">ความชื้น:</span>
-                  <span className="text-white font-bold">{sensorData.humidity}%</span>
-                </div>
+        <motion.div variants={itemVariants}>
+          <LargeCard
+            title="อุณหภูมิ"
+            num={sensorData.temperature}
+            desc="°C"
+            bgColors={bgColorClass}
+          >
+            <div className="flex justify-center">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex justify-center items-center shadow-lg">
+                <ThermometerSun size={18} className="text-white" />
               </div>
             </div>
+          </LargeCard>
+        </motion.div>
 
-            {/* Health Recommendations */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h4 className="text-xl font-bold text-gray-150 mb-4">
-                คำแนะนำด้านสุขภาพ
-              </h4>
-              <p className="text-gray-200 leading-relaxed">
-                {heatIndexResult.recommendation}
-              </p>
+        <motion.div variants={itemVariants}>
+          <LargeCard
+            title="ความชื้นสัมพัทธ์"
+            num={sensorData.humidity}
+            desc="%"
+            bgColors={bgColorClass}
+          >
+            <div className="flex justify-center">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex justify-center items-center shadow-lg">
+                <Droplets size={18} className="text-white" />
+              </div>
             </div>
+          </LargeCard>
+        </motion.div>
 
-            {/* Heat Index Formula Info */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h4 className="text-xl font-bold text-gray-150 mb-4">
-                เกี่ยวกับ Heat Index
-              </h4>
-              <p className="text-gray-200 text-sm leading-relaxed">
-                Heat Index คือค่าที่แสดงความรู้สึกร้อนของร่างกายมนุษย์ 
-                เมื่อรวมปัจจัยของอุณหภูมิและความชื้นสัมพัทธ์เข้าด้วยกัน 
-                ค่านี้จะช่วยประเมินความเสี่ยงต่อการเกิดโรคที่เกี่ยวข้องกับความร้อน
-              </p>
+        <motion.div variants={itemVariants}>
+          <LargeCard
+            title="ค่าดัชนีความร้อน"
+            num={heatIndexResult.heatIndex}
+            desc="°C"
+            bgColors={heatIndexBgClass}
+          >
+            <div className="flex justify-center">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex justify-center items-center shadow-lg">
+                <Activity size={18} className="text-white" />
+              </div>
             </div>
-          </div>
+          </LargeCard>
+        </motion.div>
+      </motion.div>
+
+      {/* PM 2.5 Hourly Section */}
+      <motion.div
+        className="relative z-10 my-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <h3 className="text-gray-100 text-xl md:text-2xl font-bold font-display">
+            PM 2.5 รายชั่วโมง
+          </h3>
+          <div className="h-px flex-1 bg-gradient-to-r from-white/30 to-transparent max-w-32" />
         </div>
 
-        {/* Heat Index Level Indicator */}
-        <HeatIndexIndicator 
-          currentLevel={heatIndexResult.level}
-          className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
-        />
-      </div>
-
-      {/* Historical Data or Trends Section */}
-      
-      
-      
-    </div>
+        <div className="max-w-lg mx-auto">
+          <PM25HourlyCard />
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

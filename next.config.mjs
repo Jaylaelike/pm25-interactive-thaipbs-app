@@ -8,7 +8,11 @@ const nextConfig = {
   },
   reactStrictMode: true,
   output: "standalone",
-  distDir: 'build',
+  distDir: '.next',
+  basePath: '/pm25',
+  env: {
+    NEXT_PUBLIC_BASE_PATH: '/pm25',
+  },
 };
 
 export default nextConfig;

@@ -20,12 +20,16 @@ export default function useMqttConfig() {
   const fetchMqttConfig = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/mqtt-config');
-      
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+      console.log('Fetching MQTT config with basePath:', basePath);
+      console.log('Full URL:', `${basePath}/api/mqtt-config`);
+      const response = await fetch(`${basePath}/api/mqtt-config`);
+
+      console.log('Response status:', response.status);
       if (!response.ok) {
-        throw new Error('Failed to fetch MQTT configuration');
+        throw new Error(`Failed to fetch MQTT configuration: ${response.status}`);
       }
-      
+
       const data: MqttConfig = await response.json();
       setMqttUrl(data.mqttUrl);
       setLocation(data.location);
@@ -42,21 +46,22 @@ export default function useMqttConfig() {
   const updateMqttConfig = async (newMqttUrl: string, newLocation?: string) => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/mqtt-config', {
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+      const response = await fetch(`${basePath}/api/mqtt-config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           mqttUrl: newMqttUrl,
           ...(newLocation && { location: newLocation })
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to update MQTT configuration');
       }
-      
+
       const data: MqttConfig = await response.json();
       setMqttUrl(data.mqttUrl);
       setLocation(data.location);
